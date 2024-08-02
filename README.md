@@ -5,16 +5,19 @@ Type-safe background jobs and message queue for serverless providers (Vercel, Cl
 
 ## Example
 
-Once you have the package configured, background and queued jobs can be managed like normal functions.
+Once installed and configured, background and queued jobs become as simple as normal functions.
 
 ```ts
-// define a job just like a normal function
+// define a job like a normal function
 export const myJob = createJob("my-job", async (payload) => {
+  // this code will run in the background
   console.log(payload);
 });
 
-// trigger (as a background job) or push it to a queue to be processed in order.
+// trigger (as a background job)
 await myJob.trigger({ name: "world" });
+
+// push it to a queue to be processed in order.
 await myJob.queue({ name: "world" }, { queue: "other" });
 ```
 
