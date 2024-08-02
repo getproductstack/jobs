@@ -17,7 +17,22 @@ const { createJob } = config({
 });
 ```
 
-2. Create a job.
+2. Create a route to process the jobs.
+
+```ts
+import { createRouteHandler } from "@productstack/jobs/nextjs";
+
+// app/api/queue/route.ts
+export const { POST } = createRouteHandler({
+  jobs: [
+    // register jobs here
+  ],
+  nextSigningKey: "next-signing-key",
+  currentSigningKey: "current-signing-key",
+});
+```
+
+3. Define a job anywhere in your codebase.
 
 ```ts
 export const myJob = createJob("my-job", async (payload) => {
@@ -25,20 +40,15 @@ export const myJob = createJob("my-job", async (payload) => {
 });
 ```
 
-3. Register the jobs.
+4. Register the job in the route handler.
 
 ```ts
-import { createHandler } from "@productstack/jobs/adapters/nextjs";
-
-// app/api/queue/route.ts
 export const { POST } = createHandler({
   jobs: [myJob],
-  nextSigningKey: "next-signing-key",
-  currentSigningKey: "current-signing-key",
 });
 ```
 
-4. Trigger as a background job or queue it.
+5. Import your job and trigger (as a background job) or queue it.
 
 ```ts
 await myJob.trigger({ name: "world" });
