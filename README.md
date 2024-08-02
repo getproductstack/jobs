@@ -4,6 +4,8 @@ Type-safe background jobs, messaging and scheduling.
 
 ## Example
 
+Configure the client.
+
 ```ts
 import { config } from "@productstack/jobs";
 
@@ -14,11 +16,15 @@ const { createJob } = config({
 });
 ```
 
+Create a job.
+
 ```ts
 const job = createJob("my-job", async (payload) => {
   console.log(payload);
 });
 ```
+
+Trigger as a background job or queue it.
 
 ```ts
 await job.trigger({ name: "world" });
