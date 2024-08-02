@@ -54,6 +54,19 @@ interface Config {
 }
 
 /**
+ * Job function.
+ */
+export type JobFunction<T = any> = (payload: T) => Promise<void>;
+
+/**
+ * Job handler.
+ */
+export interface JobHandler {
+  key: string;
+  handler: JobFunction;
+}
+
+/**
  * Options for triggering a job.
  */
 type TriggerOptions = Omit<PublishRequest, "body" | "headers">;

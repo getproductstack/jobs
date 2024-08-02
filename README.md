@@ -5,7 +5,7 @@ Type-safe background jobs and message queue for serverless providers (Vercel, Cl
 
 ## Example
 
-Configure the client.
+1. Configure the client
 
 ```ts
 import { config } from "@productstack/jobs";
@@ -17,30 +17,37 @@ const { createJob } = config({
 });
 ```
 
-Create a job.
+2. Create a job.
 
 ```ts
-const job = createJob("my-job", async (payload) => {
+export const myJob = createJob("my-job", async (payload) => {
   console.log(payload);
 });
 ```
 
-Trigger as a background job or queue it.
+3. Register the jobs.
 
 ```ts
-await job.trigger({ name: "world" });
-await job.queue({ name: "world" }, { queue: "other" });
+import { createHandler } from "@productstack/jobs/adapters/nextjs";
+
+// app/api/queue/route.ts
+export const { POST } = createHandler({
+  jobs: [myJob],
+  nextSigningKey: "next-signing-key",
+  currentSigningKey: "current-signing-key",
+});
+```
+
+4. Trigger as a background job or queue it.
+
+```ts
+await myJob.trigger({ name: "world" });
+await myJob.queue({ name: "world" }, { queue: "other" });
 ```
 
 ## Motivation
 
 Background jobs and queues are notoriously missing from popular serverless environments like Vercel. QStash is a cost-effective messaging solution that can be used to offload background jobs and control concurrency in these environments. This library aims to provide a better developer experience when using QStash by providing a clean and organized way to define jobs that can then be triggered (in the background) or queued using a type-safe API.
-
-Vercel
-
-most libraries are not type-safe and
-require you to use a specific library for each provider. This library aims to provide a type-safe and flexible solution for
-background jobs and queues for serverless applications.
 
 ## Installation
 
