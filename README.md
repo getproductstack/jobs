@@ -1,6 +1,7 @@
 # ProductStack Jobs
 
-Type-safe background jobs, messaging and scheduling.
+Type-safe background jobs, messaging and scheduling for serverless (Vercel, Netlify, Cloudflare, etc.). Built on top of
+[Upstash QStash](https://upstash.com/docs/qstash/).
 
 ## Example
 
@@ -36,5 +37,5 @@ await job.queue({ name: "world" }, { queue: "other" });
 Run the following command:
 
 ```sh
-pnpm add @productstack/jobs
+pnpm add @getproductstack/jobs
 ```
