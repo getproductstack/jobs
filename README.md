@@ -5,6 +5,31 @@ Type-safe background jobs and message queue for serverless providers (Vercel, Cl
 
 ## Example
 
+Once you have the package configured, background and queued jobs can be managed like normal functions.
+
+```ts
+// define a job just like a normal function
+export const myJob = createJob("my-job", async (payload) => {
+  console.log(payload);
+});
+
+// trigger (as a background job) or push it to a queue to be processed in order.
+await myJob.trigger({ name: "world" });
+await myJob.queue({ name: "world" }, { queue: "other" });
+```
+
+## Motivation
+
+Background jobs and queues are notoriously missing from popular serverless environments like Vercel. QStash is a cost-effective messaging solution that can be used to offload background jobs and control concurrency in these environments. This library aims to provide a better developer experience when using QStash by providing a clean and organized way to define jobs that can then be triggered (in the background) or queued using a type-safe API.
+
+## Get started
+
+Install the package:
+
+```sh
+pnpm add @getproductstack/jobs
+```
+
 1. Define the route to process the jobs.
 
 ```ts
@@ -56,16 +81,4 @@ export const { POST } = createHandler({
 ```ts
 await myJob.trigger({ name: "world" });
 await myJob.queue({ name: "world" }, { queue: "other" });
-```
-
-## Motivation
-
-Background jobs and queues are notoriously missing from popular serverless environments like Vercel. QStash is a cost-effective messaging solution that can be used to offload background jobs and control concurrency in these environments. This library aims to provide a better developer experience when using QStash by providing a clean and organized way to define jobs that can then be triggered (in the background) or queued using a type-safe API.
-
-## Installation
-
-Run the following command:
-
-```sh
-pnpm add @getproductstack/jobs
 ```
