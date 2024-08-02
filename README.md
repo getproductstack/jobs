@@ -8,15 +8,15 @@ Type-safe background jobs and message queue for serverless providers (Vercel, Cl
 1. Define the route to process the jobs.
 
 ```ts
+// app/api/queue/route.ts
 import { createRouteHandler } from "@productstack/jobs/nextjs";
 
-// app/api/queue/route.ts
 export const { POST } = createRouteHandler({
   jobs: [
-    // register jobs here
+    // register jobs you define here
   ],
-  nextSigningKey: "next-signing-key",
-  currentSigningKey: "current-signing-key",
+  nextSigningKey: "qstash-next-key",
+  currentSigningKey: "qstash-current-key",
 });
 ```
 
@@ -42,9 +42,10 @@ export const myJob = createJob("my-job", async (payload) => {
 });
 ```
 
-4. Register the job in the route handler.
+4. Register the job.
 
 ```ts
+// app/api/queue/route.ts
 export const { POST } = createHandler({
   jobs: [myJob],
 });
