@@ -14,11 +14,8 @@ export const myJob = createJob("my-job", async (payload) => {
   console.log(payload);
 });
 
-// trigger (as a background job)
-await myJob.trigger({ name: "world" });
-
-// push it to a queue to be processed in order.
-await myJob.queue({ name: "world" }, { queue: "other" });
+await myJob.trigger({ name: "world" }); // run as a background job
+await myJob.queue({ name: "world" }, { queue: "other" }); // push to FIFO queue with concurrency control
 ```
 
 ## Motivation
