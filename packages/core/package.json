@@ -1,0 +1,18 @@
+{
+  "name": "@getproductstack/queue-core",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "biome lint . --apply",
+    "format": "biome format . --apply"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@biomejs/biome": "1.8.3",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@upstash/qstash": "^2.6.2"
+  }
+}

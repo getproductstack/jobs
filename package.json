@@ -1,13 +1,14 @@
 {
-  "name": "queue",
+  "name": "@getproductstack/jobs",
   "private": true,
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "turbo format"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.8.3",
     "prettier": "^3.2.5",
     "turbo": "^2.0.11",
     "typescript": "^5.4.5"
@@ -17,7 +18,9 @@
   },
   "packageManager": "bun@1.1.10",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "docs",
+    "packages/*",
+    "examples/*",
+    "config/*"
   ]
 }
