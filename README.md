@@ -5,19 +5,7 @@ Type-safe background jobs and message queue for serverless providers (Vercel, Cl
 
 ## Example
 
-1. Configure the client
-
-```ts
-import { config } from "@productstack/jobs";
-
-const { createJob } = config({
-  endpoint: "https://my-app/api/queue",
-  queues: ["default", "other"],
-  token: "qstash-token",
-});
-```
-
-2. Create a route to process the jobs.
+1. Define the route to process the jobs.
 
 ```ts
 import { createRouteHandler } from "@productstack/jobs/nextjs";
@@ -29,6 +17,20 @@ export const { POST } = createRouteHandler({
   ],
   nextSigningKey: "next-signing-key",
   currentSigningKey: "current-signing-key",
+});
+```
+
+2. Configure the client
+
+```ts
+import { config } from "@productstack/jobs";
+
+const { createJob } = config({
+  token: "qstash-token",
+  // the endpoint of the route you created in step 1
+  endpoint: "https://my-app.com/api/queue",
+  // optional: the queues you want to send jobs to
+  queues: ["default", "other"],
 });
 ```
 
