@@ -1,16 +1,15 @@
 # ProductStack Jobs
 
-Simple, type-safe functions that can be triggered as background jobs or queued. Built on top of
-[Upstash QStash](https://upstash.com/docs/qstash/) for Next.js and Vercel.
+Simple, type-safe functions that can be triggered as background jobs or queued. Built on top of [Upstash QStash](https://upstash.com/docs/qstash/) for Next.js and Vercel.
 
 ## Example
 
 ```ts
-export const helloJob = createJob("hello", async ({ name }: { name: string }) => {
+export const job = createJob("hello", async ({ name }: { name: string }) => {
   console.log(`Hello from the background, ${name}!`);
 });
 
-await helloJob.trigger({ name: "world" });
+await job.trigger({ name: "world" });
 ```
 
 ## Motivation
@@ -21,62 +20,56 @@ This library aims to improve the developer experience when using QStash by treat
 
 ## Get started
 
-Install the package:
+Before you get started, make sure you have your [QStash token and signing keys](https://upstash.com/docs/qstash/overall/getstarted#get-your-token).
+
+**Install the package**
 
 ```sh
 pnpm add @getproductstack/jobs
 ```
-
-1. Create a route handler.
+  
+**Create a route handler**
 
 ```ts
 // app/api/jobs/route.ts
 import { createHandler } from "@productstack/jobs/nextjs";
 
-const receiver = new Receiver({
-  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY,
-  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY,
-});
-
 export const { POST } = createHandler({
-  jobs: [
-    // register jobs you define here
-  ],
-  receiver,
+  jobs: [// jobs you define here],
+  receiver: new Receiver({
+    currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY,
+    nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY,
+  }),
 });
 ```
 
-2. Configure the client
+**Configure the client**
 
 ```ts
 // lib/jobs.ts
-import { config } from "@productstack/jobs";
+import { createManager } from "@productstack/jobs";
 
-const { createJob } = config({
+const { createJob } = createManager({
   token: "qstash-token",
-  // the route you created in step 1
+  // the URL for theroute you created in step 1
   endpoint: "https://my-app.com/api/jobs",
 });
 ```
 
-3. Define jobs anywhere in your codebase.
+**Define and register a job**
 
 ```ts
 export const myJob = createJob("my-job", async (payload) => {
   console.log(payload);
 });
-```
 
-4. Register the job.
-
-```ts
 // app/api/queue/route.ts
 export const { POST } = createHandler({
   jobs: [myJob],
 });
 ```
 
-5. Import your job anywhere and trigger it as a background job.
+**Trigger the job**
 
 ```ts
 await myJob.trigger({ name: "world" });
