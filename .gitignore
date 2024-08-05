@@ -11,7 +11,7 @@ coverage
 # Build Outputs
 dist
 
-.npmrc 
+.npmrc
 
 # Debug
 npm-debug.log*
