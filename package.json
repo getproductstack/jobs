@@ -1,26 +1,48 @@
 {
   "name": "@getproductstack/jobs",
-  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "author": "Ryan T. Brown",
+  "keywords": ["background jobs", "nextjs", "queue", "vercel", "cloudflare"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/getproductstack/jobs"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./nextjs": {
+      "types": "./dist/nextjs.d.ts",
+      "default": "./dist/nextjs.js"
+    }
+  },
+  "files": ["dist", "package.json", "LICENSE", "README.md"],
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "turbo format"
+    "build": "bunchee",
+    "dev": "bunchee -w --no-clean",
+    "test": "bun test",
+    "lint": "biome lint . --apply",
+    "format": "biome format . --apply",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@upstash/qstash": "^2.6.2"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
-    "prettier": "^3.2.5",
-    "turbo": "^2.0.11",
-    "typescript": "^5.4.5"
+    "bunchee": "^5.3.1",
+    "typescript": "^5.4.5",
+    "@changesets/changelog-github": "^0.5.0",
+    "@changesets/cli": "^2.27.7",
+    "@types/bun": "^1.0.12",
+    "expect-type": "^0.19.0"
   },
-  "engines": {
-    "node": ">=18"
-  },
-  "packageManager": "bun@1.1.10",
-  "workspaces": [
-    "docs",
-    "packages/*",
-    "examples/*",
-    "config/*"
-  ]
+  "peerDependencies": {
+    "typescript": ">=5.0.0",
+    "@upstash/qstash": "^2.6.2"
+  }
 }

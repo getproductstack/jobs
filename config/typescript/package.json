@@ -1,9 +1,0 @@
-{
-  "name": "@repo/typescript-config",
-  "private": true,
-  "version": "0.1.0",
-  "files": ["base.json"],
-  "devDependencies": {
-    "@biomejs/biome": "1.8.3"
-  }
-}

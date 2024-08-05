@@ -17,5 +17,6 @@
     "incremental": true,
     "noUncheckedIndexedAccess": true
   },
-  "exclude": ["node_modules", "build", "dist", ".next"]
+  "exclude": ["node_modules", "dist"],
+  "include": ["."]
 }

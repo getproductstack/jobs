@@ -1,14 +1,13 @@
 # ProductStack Jobs
 
-Type-safe background jobs and message queue for serverless providers (Vercel, Cloudflare, etc.). Built on top of
+Type-safe background jobs and message queues for serverless providers. Built on top of
 [Upstash QStash](https://upstash.com/docs/qstash/).
 
 ## Example
 
-Once installed and configured, background and queued jobs become as simple as normal functions.
+Background jobs and queues should be as straitforward as normal functions.
 
 ```ts
-// define a job like a normal function
 export const myJob = createJob("my-job", async (payload) => {
   // this code will run in the background
   console.log(payload);
@@ -16,6 +15,10 @@ export const myJob = createJob("my-job", async (payload) => {
 
 await myJob.trigger({ name: "world" }); // run as a background job
 await myJob.queue({ name: "world" }, { queue: "other" }); // push to FIFO queue with concurrency control
+```
+
+```ts
+const queue = await myJob.queue({ name: "world" }, { queue: "other" }); // push to FIFO queue with concurrency control
 ```
 
 ## Motivation
@@ -36,12 +39,16 @@ pnpm add @getproductstack/jobs
 // app/api/queue/route.ts
 import { createRouteHandler } from "@productstack/jobs/nextjs";
 
+const receiver = new Receiver({
+  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY,
+  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY,
+});
+
 export const { POST } = createRouteHandler({
   jobs: [
     // register jobs you define here
   ],
-  nextSigningKey: "qstash-next-key",
-  currentSigningKey: "qstash-current-key",
+  receiver,
 });
 ```
 

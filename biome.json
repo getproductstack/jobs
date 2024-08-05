@@ -17,23 +17,9 @@
     "enabled": true,
     "rules": {
       "recommended": true,
-      "a11y": {
-        "noSvgWithoutTitle": {
-          "level": "off"
-        }
-      },
       "suspicious": {
         "noArrayIndexKey": {
           "level": "off"
-        }
-      },
-      "nursery": {
-        "useSortedClasses": {
-          "level": "warn",
-          "fix": "safe",
-          "options": {
-            "functions": ["cm", "cn", "tv"]
-          }
         }
       }
     }

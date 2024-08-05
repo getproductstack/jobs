@@ -1,9 +1,9 @@
-import { Client, PublishRequest } from "@upstash/qstash";
+import { Client, type PublishRequest } from "@upstash/qstash";
 
 /**
  * Configuration for the manager.
  */
-interface Config {
+interface ManagerConfig {
   /**
    * The Upstash QStash token to use.
    *
@@ -17,13 +17,6 @@ interface Config {
    * @example "https://your-domain.com/api/queue"
    */
   endpoint: string;
-
-  /**
-   * An array of queue names.
-   *
-   * @default ["default"]
-   */
-  queues?: readonly string[];
 
   /**
    * Whether to retry failed jobs.
@@ -54,48 +47,28 @@ interface Config {
 }
 
 /**
- * Job function.
- */
-export type JobFunction<T = any> = (payload: T) => Promise<void>;
-
-/**
- * Job handler.
- */
-export interface JobHandler {
-  key: string;
-  handler: JobFunction;
-}
-
-/**
  * Options for triggering a job.
  */
-type TriggerOptions = Omit<PublishRequest, "body" | "headers">;
+type TriggerOptions = Omit<PublishRequest, "body">;
 
 /**
  * Options for queueing a job.
  */
-type QueueOptions<T> = TriggerOptions & { queue?: T };
-
-/**
- * The QStash SDK does not export Queue.
- */
-type Queue = ReturnType<Client["queue"]>;
+type QueueOptions = TriggerOptions & { queue?: string };
 
 /**
  * Create a new queue manager.
  */
-export function config<T extends readonly string[]>(
-  config: Config & { queues: T }
-) {
-  return new QueueManager(config);
+export function createManager(config: ManagerConfig) {
+  return new JobManager(config);
 }
 
 /**
  * A queue manager.
  */
-class QueueManager<T extends readonly string[]> {
+class JobManager {
   /**
-   * The Upstash QStash client.
+   * The QStash client.
    */
   private client: Client;
 
@@ -107,32 +80,50 @@ class QueueManager<T extends readonly string[]> {
   /**
    * The queues to use.
    */
-  private queues: Record<string, Queue> = {};
+  private queues: Map<string, ReturnType<Client["queue"]>> = new Map();
 
   /**
    * Create a new queue manager.
+   *
+   * @param config - The configuration to use.
    */
-  constructor(config: Config & { queues: T }) {
+  constructor(config: ManagerConfig) {
     this.client = new Client({
       token: config.token,
       retry: config.retry ?? false,
     });
 
     this.endpoint = config.endpoint;
+  }
 
-    for (const queueName of [...config.queues]) {
-      this.queues[queueName] = this.client.queue({ queueName });
-    }
+  /**
+   * Create a new queue.
+   *
+   * @param name - The name of the queue.
+   * @param options - The options to use.
+   * @param options.parallelism - The number of jobs to run in parallel.
+   */
+  public async createQueue(name: string, options: { parallelism: number }) {
+    const queue = this.client.queue({ queueName: name });
+
+    await queue.upsert({ parallelism: options.parallelism ?? 1 });
+
+    this.queues.set(name, queue);
   }
 
   /**
    * Create a job.
+   *
+   * @param key - The job key, used to identify the job.
+   * @param handler - The job function, called when the job is triggered.
    */
-  createJob<TPayload>(
+  public createJob<TPayload>(
     key: string,
-    handler: (payload: TPayload) => Promise<void>
+    handler: (payload: TPayload) => Promise<void>,
   ) {
     return {
+      key,
+      handler,
       /**
        * Run a job immediately.
        */
@@ -147,18 +138,24 @@ class QueueManager<T extends readonly string[]> {
       /**
        * Queue a job to run at a later time.
        */
-      queue: (payload: TPayload, options: QueueOptions<T[number]>) =>
+      queue: (payload: TPayload, options: QueueOptions) =>
         this.queue(key, payload, options),
     };
   }
 
   /**
    * Build a request for triggering/queueing a job.
+   *
+   * @param key - The job key.
+   * @param body - The job payload.
+   * @param options - The options to use.
+   *
+   * @returns The request that will be sent to QStash.
    */
-  private buildRequest<B>(
+  private buildRequest<TBody>(
     key: string,
-    body: B,
-    options?: TriggerOptions
+    body: TBody,
+    options?: TriggerOptions,
   ): PublishRequest {
     return {
       ...options,
@@ -170,22 +167,30 @@ class QueueManager<T extends readonly string[]> {
 
   /**
    * Trigger a job.
+   *
+   * @param key - The job key.
+   * @param body - The job payload.
+   * @param options - The options to use.
    */
-  private trigger<B>(key: string, body: B, options?: TriggerOptions) {
+  private trigger<TBody>(key: string, body: TBody, options?: TriggerOptions) {
     const job = this.buildRequest(key, body, options);
 
-    return this.client.publish(job);
+    return this.client.publishJSON(job);
   }
 
   /**
    * Queue a job.
+   *
+   * @param key - The job key.
+   * @param body - The job payload.
+   * @param options - The options to use.
    */
-  private queue<B>(key: string, body: B, options: QueueOptions<T[number]>) {
-    const queueName = options.queue ?? "default";
-    const queue = this.queues[queueName];
+  private queue<TBody>(key: string, body: TBody, options: QueueOptions) {
+    const name = options.queue ?? "default";
+    const queue = this.queues.get(name);
 
     if (!queue) {
-      throw new Error(`Queue "${queueName}" does not exist`);
+      throw new Error(`Queue "${name}" does not exist`);
     }
 
     const job = this.buildRequest(key, body, options);
