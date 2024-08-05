@@ -4,7 +4,7 @@
   "type": "module",
   "license": "MIT",
   "author": "Ryan T. Brown",
-  "keywords": ["background jobs", "nextjs", "queue", "vercel", "cloudflare"],
+  "keywords": ["background jobs", "nextjs", "queue", "vercel"],
   "repository": {
     "type": "git",
     "url": "https://github.com/getproductstack/jobs"

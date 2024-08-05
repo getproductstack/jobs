@@ -1,29 +1,24 @@
 # ProductStack Jobs
 
-Type-safe background jobs and message queues for serverless providers. Built on top of
-[Upstash QStash](https://upstash.com/docs/qstash/).
+Simple, type-safe functions that can be triggered as background jobs or queued. Built on top of
+[Upstash QStash](https://upstash.com/docs/qstash/) for Next.js and Vercel.
 
 ## Example
 
-Background jobs and queues should be as straitforward as normal functions.
-
 ```ts
-export const myJob = createJob("my-job", async (payload) => {
+export const helloJob = createJob("hello", async ({ name }: { name: string }) => {
   // this code will run in the background
-  console.log(payload);
+  console.log(`Hello from the background, ${name}!`);
 });
 
-await myJob.trigger({ name: "world" }); // run as a background job
-await myJob.queue({ name: "world" }, { queue: "other" }); // push to FIFO queue with concurrency control
-```
-
-```ts
-const queue = await myJob.queue({ name: "world" }, { queue: "other" }); // push to FIFO queue with concurrency control
+await helloJob.trigger({ name: "world" });
 ```
 
 ## Motivation
 
-Background jobs and queues are notoriously missing from popular serverless environments like Vercel. QStash is a cost-effective messaging solution that can be used to offload background jobs and control concurrency in these environments. This library aims to provide a better developer experience when using QStash by providing a clean and organized way to define jobs that can then be triggered (in the background) or queued using a type-safe API.
+With Next.js and Vercel, background jobs, events, queues, etc. are notoriously missing. There are services like [Inngest](https://inngest.com/) and [Trigger.dev](https://trigger.dev/) that provide these async workflows but they are not as simple or as cost-effective as Upstash QStash.
+
+The only problem with QStash is that the DX leaves a few things to be desired. This library aims to bridge that gap by treating jobs as first-class citizens in your codebase that can be triggered and/or queued.
 
 ## Get started
 
