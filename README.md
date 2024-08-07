@@ -69,8 +69,8 @@ export const { POST } = createHandler({
 });
 ```
 
-**Trigger the job**
+**Dispatch the job**
 
 ```ts
-await myJob.trigger({ name: "world" });
+await myJob.dispatch({ name: "world" });
 ```
