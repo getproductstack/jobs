@@ -14,7 +14,7 @@ await job.dispatch({ name: "world" });
 
 ## Motivation
 
-This library aims to improve the developer experience when using QStash by treating jobs as first-class objects that can be dispatched.
+This library aims to improve the developer experience when using QStash by treating jobs as first-class objects that can be dispatched. If you would like to learn more about the motivation behind this library, please read the [blog post](https://ryantbrown.me/articles/simple-typesafe-background-jobs-in-nextjs).
 
 ## Get started
 
