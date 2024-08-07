@@ -33,12 +33,16 @@ pnpm add @getproductstack/jobs
 import { Receiver } from "@upstash/qstash";
 import { createHandler } from "@productstack/jobs/nextjs";
 
+const receiver = new Receiver({
+  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY,
+  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY,
+})
+
 export const { POST } = createHandler({
-  jobs: [// jobs you define here],
-  receiver: new Receiver({
-    currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY,
-    nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY,
-  }),
+  receiver,
+  jobs: [
+    // jobs you define here
+  ],
 });
 ```
 
@@ -49,8 +53,12 @@ export const { POST } = createHandler({
 import { Client } from "@upstash/qstash";
 import { createManager } from "@productstack/jobs";
 
+const client = new Client({
+  token: process.env.QSTASH_TOKEN,
+});
+
 const { createJob } = createManager({
-  client: new Client({ token: process.env.QSTASH_TOKEN }),
+  client,
   // the URL for the route.ts you created in step 1
   endpoint: "https://my-app.com/api/jobs",
 });
