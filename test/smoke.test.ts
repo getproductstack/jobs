@@ -37,6 +37,6 @@ test("creates a job with run, trigger, and queue methods", async () => {
   );
 
   expect(typeof job.run).toBe("function");
-  expect(typeof job.trigger).toBe("function");
+  expect(typeof job.dispatch).toBe("function");
   expect(typeof job.queue).toBe("function");
 });

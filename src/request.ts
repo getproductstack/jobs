@@ -1,5 +1,5 @@
 import type { Receiver } from "@upstash/qstash";
-import type { Job, JobFunction } from "./job";
+import type { Job, JobMap } from "./job";
 
 /**
  * Request handler options.
@@ -21,7 +21,7 @@ export async function requestHandler({
   /**
    * Global registry of all jobs.
    */
-  const registry = new Map<string, JobFunction>();
+  const registry: JobMap = new Map();
 
   /**
    * Register the jobs so they can be executed.

@@ -16,5 +16,10 @@ export interface Job {
 /**
  * Job function.
  */
-// biome-ignore lint/suspicious/noExplicitAny:
+// biome-ignore lint/suspicious/noExplicitAny: any for flexibility.
 export type JobFunction<T = any> = (payload: T) => Promise<void>;
+
+/**
+ * Job map.
+ */
+export type JobMap = Map<string, JobFunction>;
